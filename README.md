@@ -302,6 +302,10 @@ import type { Deal, DealInsert, DealUpdate, Customer, Supplier, Product } from '
 - Implement proper TypeScript types
 - Use React Hook Form for form handling
 
+## 🔄 TODO
+
+- **Authentication System**: Login/signup functionality needs to be implemented
+
 ---
 
 **Repository**: https://github.com/tanaymehhta/onemorepolymer

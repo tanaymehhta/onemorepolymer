@@ -1,4 +1,5 @@
 export type { Database, Tables, TablesInsert, TablesUpdate } from './database.types'
+import type { Tables, TablesInsert, TablesUpdate } from './database.types'
 
 // Common type aliases for easier use
 export type Deal = Tables<'deals_unified'>

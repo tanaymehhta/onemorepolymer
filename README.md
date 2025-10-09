@@ -1,4 +1,48 @@
-# One More Polymer - Trading Management System
+# Polymer Trading Management System
+
+**What It Is**
+A web + mobile app to manage a polymer trading business processing 15-30 deals per day. Replace manual Excel workflows with automated deal entry, messaging, and business intelligence.
+
+## 🎯 Project Status & Roadmap
+
+### Pre-MVP (Foundation - COMPLETED ✅)
+- Supabase database with 34,200 historical deals
+- 200 customers, 200 suppliers, 312 products imported
+- GitHub repository with Next.js 14 + TypeScript
+- Vercel deployment connected
+- Project structure ready for development
+
+### MVP Features (Building Now)
+
+**1. Deal Entry**
+- Simple form: customer, product, quantity, price
+- Real-time cost calculation (base + charges + GST + TCS = margin)
+- One-click save
+
+**2. Automated Messaging**
+- Click "Register Deal" → auto-sends WhatsApp + Telegram notifications
+- Template-based messages with deal details
+- Retry logic for failed sends
+
+**3. Google Sheets Sync**
+- Every deal automatically updates a Google Sheet row
+- Keeps existing spreadsheet workflow working
+
+**4. Deal List**
+- View all deals in table
+- Search and filter (date, customer, product, price)
+- Click deal → see full details with cost breakdown
+
+**5. Health Dashboard**
+- Shows status: Database ✅, WhatsApp ✅, Telegram ✅, Sheets ✅
+- View failed messages + retry button
+- Manual "Test Now" button for full system check
+
+**MVP Flow**: Create deal → Send messages → Update sheet → View in list → Monitor health
+
+**After MVP works**: Dashboard, Chat with Data, Price Lists, Inventory, etc.
+
+---
 
 A comprehensive polymer trading management system built with Next.js 14, TypeScript, and Supabase. This application manages deals, customers, suppliers, products, and automated messaging for polymer trading operations.
 
@@ -301,6 +345,98 @@ import type { Deal, DealInsert, DealUpdate, Customer, Supplier, Product } from '
 - Follow the established folder structure
 - Implement proper TypeScript types
 - Use React Hook Form for form handling
+
+## 🤖 OpenAI Agents SDK - Best Practices Guide
+
+Based on our hands-on experience building conversational agents, here are essential do's and don'ts for using the OpenAI Agents SDK effectively:
+
+### ✅ DO's
+
+#### **Conversation Memory Management**
+- **DO** use the SDK's built-in `history` property from `run()` results
+- **DO** store and pass conversation history between agent runs: `sessionHistory = result.history`
+- **DO** provide session-level history storage for contextual conversations
+- **DO** add "clear" commands to reset conversation memory when needed
+
+#### **Agent Design**
+- **DO** create specialized agents for different tasks (financial analysis, competitive research, etc.)
+- **DO** use detailed, specific instructions with clear examples in agent prompts
+- **DO** include context-aware instructions that reference conversation history
+- **DO** implement proper triage/routing systems to direct questions to appropriate agents
+
+#### **Error Handling & Debugging**
+- **DO** implement robust JSON parsing with fallback extraction: `jsonMatch = response.match(/\{.*\}/)`
+- **DO** add comprehensive logging for debugging: conversation length, routing decisions, API responses
+- **DO** use try-catch blocks around all agent operations
+- **DO** provide user-friendly error messages while logging detailed errors for debugging
+
+#### **Data Integration**
+- **DO** cache API responses (financial data, etc.) to avoid rate limits
+- **DO** integrate real data sources (Alpha Vantage, etc.) for accurate analysis
+- **DO** use proper environment variable management for API keys
+- **DO** implement ticker/company name mapping for user convenience
+
+### ❌ DON'Ts
+
+#### **Conversation Memory Mistakes**
+- **DON'T** call `run(agent, prompt)` independently each time - this loses all context
+- **DON'T** manually manage conversation arrays - use the SDK's `history` property
+- **DON'T** forget to pass conversation history to subsequent agent runs
+- **DON'T** assume agents remember previous conversations without explicit history passing
+
+#### **Agent Architecture Mistakes**
+- **DON'T** create one monolithic agent for all tasks - use specialized agents
+- **DON'T** use generic prompts without specific examples and format requirements
+- **DON'T** ignore follow-up questions and references to previous context
+- **DON'T** rely on menu-driven interfaces when natural language parsing works better
+
+#### **Common Technical Mistakes**
+- **DON'T** assume JSON responses are always valid - implement robust parsing
+- **DON'T** use wrong package names: it's `@openai/agents`, not `openai-agents`
+- **DON'T** call `Runner.run()` - use `run()` function directly
+- **DON'T** access `result.final_output` - use `result.finalOutput` (camelCase)
+
+#### **User Experience Mistakes**
+- **DON'T** force users through complex menu systems for simple questions
+- **DON'T** make users specify question types when AI can determine intent
+- **DON'T** lose context between related questions in the same conversation
+- **DON'T** provide generic responses when specific, contextual answers are expected
+
+### 💡 Key Learnings
+
+1. **The SDK has built-in memory management** - don't reinvent it
+2. **Context is everything** - follow-up questions depend on conversation history
+3. **Specialized agents work better** than one do-everything agent
+4. **Natural language parsing** beats menu-driven interfaces
+5. **Error handling is crucial** - agents fail in unpredictable ways
+
+### 🎯 Example Implementation Pattern
+
+```javascript
+// ✅ Correct: Conversation-aware agent calls
+let sessionHistory = [];
+
+async function processQuestion(userQuestion) {
+  // Add user message to history
+  sessionHistory.push({ role: 'user', content: userQuestion });
+
+  // Run with context
+  const result = await run(agent, sessionHistory);
+
+  // Update history with response
+  sessionHistory = result.history;
+
+  return result.finalOutput;
+}
+
+// ❌ Wrong: Independent calls without memory
+async function processQuestion(userQuestion) {
+  const result = await run(agent, userQuestion); // No context
+  return result.finalOutput;
+}
+```
+
+This guide is based on real implementation experience and mistakes we made while building the interactive company research system.
 
 ## 🔄 TODO
 
